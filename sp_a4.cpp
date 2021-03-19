@@ -2,9 +2,21 @@
 using namespace std;
 
 int line_number = 0;
-bool isoperator(char c){
+bool isoperator(char c)
+{
     return (c=='+' || c=='-' || c=='*' || c=='/' || c=='#' || c=='(' || c==')' 
     || c=='{' || c=='}' || c==';' || c=='%' || c==',' || c=='.' || c=='<' || c=='>' || c=='&');
+}
+
+bool isSymbol(char c)
+{
+    if(((int)c >= 32 && (int)c <= 47) || ((int)c >= 58 && (int)c <= 64)
+        || ((int)c >= 91 && (int)c <= 96) || ((int)c >= 123 && (int)c <= 126))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 void get_words(){
@@ -54,22 +66,34 @@ void get_words(){
             vector<string> words;
             
             //inserting word in words array
-            while(ans[i]){
-                if(ans[i]==' ' || ans[i]=='(' || ans[i]==')' || ans[i]==',' || ans[i]==';'){
-                    words.push_back(temp);
-                    temp="";
-                    op=ans[i];
+            while(ans[i]){                
+                if(isSymbol(ans[i]))
+                {
                     if(ans[i] != ' ')
-                        words.push_back(op);
+                    {
+                        temp += ans[i];
+                        words.push_back(temp);
+                        temp = "";
+                    }
                 }
-                else if(ans[i]!=' ')
-                     temp+=ans[i];
+                else if(!isSymbol(ans[i]) && !isSymbol(ans[i+1]))
+                    temp += ans[i];
+
+                else if(!isSymbol(ans[i]) && isSymbol(ans[i+1]))
+                {
+                    temp += ans[i];
+                    words.push_back(temp);
+                    temp = "";
+                }
+                else
+                {
+                    words.push_back(temp);
+                    temp = "";
+                }
+
                 i++;
             }
-            if(temp.length()){
-                words.push_back(temp);
-            }
-                       
+                                 
             for(auto x:words){
                 cout<<x<<endl;
             }
@@ -95,3 +119,5 @@ int main(){
     get_words();
     return 0;
 }
+
+
