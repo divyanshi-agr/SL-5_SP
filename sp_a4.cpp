@@ -102,7 +102,7 @@ bool isNo(char c)
 
 void get_words(){
 
-    FILE* fp=fopen("sample.c","r");
+    FILE* fp=fopen("sample.txt","r");
     char c;
     
     char buffer[100];
@@ -153,15 +153,30 @@ void get_words(){
             
             //inserting word in words array
             while(ans[i]){
-                //for special characters                
+                //for special characters             
                 if(isSymbol(ans[i]))
                 {
-                    if(ans[i] != ' ')
+                    if(ans[i] == '"')
+                    {
+                        temp += ans[i];
+                        i++;
+                        while(ans[i] != '"')
+                        {
+                            temp += ans[i];
+                            i++;
+                        }
+                        temp += ans[i];
+                        words.push_back(temp);
+                        lits.push_back(temp);
+                        temp = "";
+                    }
+                    else if(ans[i] != ' ')
                     {
                         temp += ans[i];
                         words.push_back(temp);
                         temp = "";
                     }
+                    
                 }
                 //for number and lookahead also number
                 else if(isdigit(ans[i]) && isdigit(ans[i+1]))
@@ -188,6 +203,7 @@ void get_words(){
                     words.push_back(temp);
                     temp = "";
                 }
+                //if space comes
                 else
                 {
                     words.push_back(temp);
@@ -226,7 +242,7 @@ void get_words(){
             }       
     }
     else{
-            if(isdigit(c) || c=='=' || isalpha(c) || c==' ' || c=='\t' || isoperator(c)){
+            if(isdigit(c) || c=='=' || isalpha(c) || c==' ' || c=='\t' || isSymbol(c)){
                 buffer[k]=c;
                 k++;
             }
