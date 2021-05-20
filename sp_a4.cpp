@@ -156,20 +156,22 @@ void get_words(){
                 //for special characters             
                 if(isSymbol(ans[i]))
                 {
+                    //for checking literal
                     if(ans[i] == '"')
                     {
-                        temp += ans[i];
+                        temp += ans[i];     //store first " in temp
                         i++;
                         while(ans[i] != '"')
                         {
-                            temp += ans[i];
+                            temp += ans[i]; //store everything inside "" in temp
                             i++;
                         }
-                        temp += ans[i];
+                        temp += ans[i];     //store last " in temp
                         words.push_back(temp);
                         lits.push_back(temp);
                         temp = "";
                     }
+                    //if any other symbol occurs, which is not a space
                     else if(ans[i] != ' ')
                     {
                         temp += ans[i];
@@ -182,7 +184,6 @@ void get_words(){
                 else if(isdigit(ans[i]) && isdigit(ans[i+1]))
                 {
                     temp += ans[i];
-                    //cout<<ans[i]<<"is a number"<<endl;
                 }
                 //for number and lookahead a symbol
                 else if(isdigit(ans[i]) && isSymbol(ans[i+1]))
