@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+#include <typeinfo>
 using namespace std;
 
 int line_number = 0;
@@ -82,6 +83,15 @@ bool isSymbol(char c)
     return false;
 }
 
+bool isNo(char c)
+{
+    if(c >= '0' && c <= '9')
+    {
+        return true;
+    }
+    return false;
+}
+
 // bool isComment(char c, char lookahead)
 // {
 //      if((int)c == 47 && (int)lookahead == 47)
@@ -97,6 +107,8 @@ void get_words(){
     
     char buffer[100];
     int k=0;
+    int idIndex = 1, litIndex = 1; 
+
     
     while((c=fgetc(fp))!=EOF){
         if(c=='\n'){
@@ -108,6 +120,7 @@ void get_words(){
             int p=0;
             int i=0;
             int f=0;
+                    
 
             //check if more than 1 spaces, then take only 1 space
             while(buffer[i]){
@@ -135,6 +148,8 @@ void get_words(){
             string temp;
             string op;
             vector<string> words;
+            vector<string> lits;
+            vector<string>::iterator it;
             
             //inserting word in words array
             while(ans[i]){
@@ -148,12 +163,26 @@ void get_words(){
                         temp = "";
                     }
                 }
+                //for number and lookahead also number
+                else if(isdigit(ans[i]) && isdigit(ans[i+1]))
+                {
+                    temp += ans[i];
+                    //cout<<ans[i]<<"is a number"<<endl;
+                }
+                //for number and lookahead a symbol
+                else if(isdigit(ans[i]) && isSymbol(ans[i+1]))
+                {
+                    temp += ans[i];
+                    words.push_back(temp);
+                    lits.push_back(temp);
+                    temp = "";
+                }
                 //for alphabet and lookahead also alphabet
-                else if(!isSymbol(ans[i]) && !isSymbol(ans[i+1]))
+                else if(isalpha(ans[i]) && isalpha(ans[i+1]))
                     temp += ans[i];
                 
                 //for alphabet and lookahead not alphabet but symbol
-                else if(!isSymbol(ans[i]) && isSymbol(ans[i+1]))
+                else if(isalpha(ans[i]) && isSymbol(ans[i+1]))
                 {
                     temp += ans[i];
                     words.push_back(temp);
@@ -167,19 +196,34 @@ void get_words(){
 
                 i++;
             }
-                                 
+ 
+            //distributing in respective tables
             for(auto x:words){
-
-                //if the token is a terminal
+                
+                //if token is a terminal, just push it in UST table
                 if(terminal_table.find(x)!=terminal_table.end()){   
-                   ust_table.push_back({x, terminal_table[x].indicator, terminal_table[x].index});
+                   ust_table.push_back({x, "Terminal", terminal_table[x].index});
                 }
 
-                //if the token is an identifier
-                if(terminal_table.find(x)==terminal_table.end()){   
-                   identifier_table.push_back({x, terminal_table[x].index});
-                }
-            }
+                 //if the token is not found in terminal table
+                if(terminal_table.find(x)==terminal_table.end()){ 
+
+                    it = find(lits.begin(), lits.end(), x );
+                    //if token is a literal
+                    if (it != lits.end())
+                    {
+                        ust_table.push_back({x, "A Literal", litIndex});
+                        literal_table.push_back({x, litIndex});
+                        litIndex++;
+                    }
+                    //if token is an identifier
+                    else {
+                        ust_table.push_back({x, "Identifier", idIndex});
+                        identifier_table.push_back({x, idIndex});
+                        idIndex++;
+                    }
+                } 
+            }       
     }
     else{
             if(isdigit(c) || c=='=' || isalpha(c) || c==' ' || c=='\t' || isoperator(c)){
@@ -191,24 +235,43 @@ void get_words(){
                 k++;
             }
         }
-
     }
     
     fclose(fp);     
 }
 
-int main(){ 
+int main() { 
    initialize(terminal_table);
     get_words();
-     cout<<endl<<"TOKEN"<<"\t"<<"CLASS"<<"\t"<<"INDEX"<<endl<<endl;
-            for(auto x:ust_table){
-    	        cout<<x.token<<"\t"<<x.token_class<<"\t"<<x.index<<endl;
-            }
+    std::cout<<endl<<endl<<"UST TABLE ::";
+    std::cout<<endl<<"----------------------------------";
+    std::cout<<endl<<"TOKEN"<<"\t"<<"CLASS"<<"\t\t"<<"INDEX"<<endl;
+    std::cout<<"----------------------------------"<<endl;
 
-     cout<<endl<<"IDENTIFIER"<<"\t"<<"INDEX"<<endl<<endl;
-            for(auto x:identifier_table){
-    	        cout<<x.id_name<<"\t"<<x.index<<endl;
-            }
+        for(auto x:ust_table){
+            std::cout<<x.token<<"\t"<<x.token_class<<"\t"<<x.index<<endl;
+        
+        }
+
+    std::cout<<endl<<endl<<"IDENTIFIER TABLE ::";
+    std::cout<<endl<<"----------------------------------";
+    std::cout<<endl<<"IDENTIFIER"<<"\t"<<"INDEX";
+    std::cout<<endl<<"----------------------------------"<<endl;
+
+        for(auto x:identifier_table){
+            std::cout<<x.id_name<<"\t\t"<<x.index<<endl;
+        }
+
+    std::cout<<endl<<endl<<"LITERAL TABLE ::";
+    std::cout<<endl<<"----------------------------------";
+    std::cout<<endl<<"LITERAL"<<"\t\t"<<"INDEX"<<endl;
+    std::cout<<"----------------------------------"<<endl;
+
+        for(auto x:literal_table){
+            std::cout<<x.lit_name<<"\t\t"<<x.index<<endl;
+        }
+
+    std::cout<<endl;
     return 0;
 }
 
