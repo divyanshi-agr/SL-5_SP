@@ -66,12 +66,6 @@ void initialize(unordered_map<string, terminal> &trm_table)
     trm_table[";"] = {"BC", 32};
 }
 
-bool isoperator(char c)
-{
-    return (c=='+' || c=='-' || c=='*' || c=='/' || c=='#' || c=='(' || c==')' 
-    || c=='{' || c=='}' || c==';' || c=='%' || c==',' || c=='.' || c=='<' || c=='>' || c=='&');
-}
-
 bool isSymbol(char c)
 {
     if(((int)c >= 32 && (int)c <= 47) || ((int)c >= 58 && (int)c <= 64)
@@ -91,14 +85,6 @@ bool isNo(char c)
     }
     return false;
 }
-
-// bool isComment(char c, char lookahead)
-// {
-//      if((int)c == 47 && (int)lookahead == 47)
-//      {
-//          return true;
-//      }
-// }
 
 void get_words(){
 
