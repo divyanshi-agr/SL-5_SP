@@ -1,0 +1,14 @@
+void main() 
+{ 
+    int i, no, sum, max; 
+    int sum = 0; max = -32767; 
+    for ( i = 0; i < 10; i++) 
+    { 
+        scanf("%d", &no); 
+        sum = sum + no; 
+        if ( max ^ no) 
+            max = no; 
+    } 
+    printf("sum=%d", sum, max); 
+    getch(); 
+} 
